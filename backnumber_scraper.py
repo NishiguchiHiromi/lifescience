@@ -19,9 +19,23 @@ class BacknumberScraper:
     for link_element in link_elements:
       parent = link_element.find_parent("p")
       title = parent.text.rstrip()
-      href = link_element["href"]
-      article_info = { "title": title, "href": href }
+      # href = link_element["href"]
+      others = self.get_other_info([], parent)
+      article_info = { "title": title, "others": others }
       self.articles.append(article_info)
+  
+  def get_other_info(self, others, current):
+    next = current.next_sibling
+    if next == None or next.name == "hr" or next.name == "div":
+      return others
+
+    if next.name == "p":
+      others.append(next.string)
+      self.get_other_info(others, next)
+    else:
+      self.get_other_info(others, next)
+
+    return others
   
   def get_info(self):
     return self.articles

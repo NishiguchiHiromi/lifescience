@@ -19,8 +19,8 @@ class Main:
     index_scraper.scrape()
 
     # 動作確認用
-    # self.years = [index_scraper.get_info()[0]]
-    self.years = index_scraper.get_info()
+    self.years = [index_scraper.get_info()[0]]
+    # self.years = index_scraper.get_info()
   
   def scrape_backnumbers(self):
     for year in self.years:
@@ -33,12 +33,12 @@ class Main:
         time.sleep(1)
   
   def export_csv(self):
-    csv_header = ['year', 'backnumber','title','url']
+    csv_header = ['year', 'backnumber','title', 'other1', 'other2', 'other3']
     csv_body = []
     for year in self.years:
       for backnumber in year["backnumbers"]:
         for article in backnumber["articles"]:
-          csv_body.append([year["name"], backnumber["name"], article["title"], article["href"]])
+          csv_body.append([year["name"], backnumber["name"], article["title"], *article["others"]])
 
     with open('result.csv', 'w') as f:
       writer = csv.writer(f)
