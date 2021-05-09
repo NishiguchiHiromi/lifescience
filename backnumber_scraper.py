@@ -15,27 +15,16 @@ class BacknumberScraper:
     self.page = BeautifulSoup(html.content, "html.parser")
 
   def parse(self):
-    link_elements = self.page.select("#box_mkj p a")
-    for link_element in link_elements:
-      parent = link_element.find_parent("p")
-      title = parent.text.rstrip()
-      # href = link_element["href"]
-      others = self.get_other_info([], parent)
-      article_info = { "title": title, "others": others }
-      self.articles.append(article_info)
-  
-  def get_other_info(self, others, current):
-    next = current.next_sibling
-    if next == None or next.name == "hr" or next.name == "div":
-      return others
-
-    if next.name == "p":
-      others.append(next.string)
-      self.get_other_info(others, next)
-    else:
-      self.get_other_info(others, next)
-
-    return others
+    elements = self.page.select("#box_mkj p,#box_mkj div,#box_mkj hr")
+    current = []
+    for element in elements:
+      if element.name == "hr" or element.name == "div":
+        if current:
+          self.articles.append(current)
+          current = []
+      else:
+        content = element.text.rstrip()
+        current.append(content)
   
   def get_info(self):
     return self.articles
